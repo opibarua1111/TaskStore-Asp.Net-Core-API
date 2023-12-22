@@ -38,10 +38,20 @@ namespace TaskStore.Controllers
         }
 
         // GET api/<TaskController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("getTaskById")]
+        public async Task<IActionResult> getTaskById(Guid Id)
         {
-            return "value";
+            ApiResponse response = new();
+            try
+            {
+                response = await _taskService.getTaskById(Id);
+            }
+            catch (Exception ex)
+            {
+                response.statusCode = 500;
+                response.message = ex.InnerException?.Message ?? ex.Message;
+            }
+            return Ok(response);
         }
 
         [HttpPost("saveTask")]

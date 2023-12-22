@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 using System.Text.Json;
 using TaskStore.Data;
 using TaskStore.Model;
@@ -114,6 +115,35 @@ namespace TaskStore.Services
                 _context.Entry(task).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
                 response.message = "Task Deleted Sucessfully";
+
+                return response;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public async Task<ApiResponse> getTaskById(Guid Id)
+        {
+            ApiResponse response = new() { statusCode = 200 };
+
+            try
+            {
+                var task = await _context.Tasks
+                    .Where(x => x.IsDeleted != true && x.Id == Id)
+                    .Select(task => new TaskResponse()
+                    {
+                        Id = task.Id,
+                        Title = task.Title,
+                        Description = task.Description,
+                        DueDate = task.DueDate
+                    }).FirstOrDefaultAsync();
+                if (task == null)
+                {
+                    throw new Exception("This id task couldn't found");
+                }
+                response.data = JsonSerializer.Serialize(new { task = task });
+                response.message = "Task get Sucessfully";
 
                 return response;
             }

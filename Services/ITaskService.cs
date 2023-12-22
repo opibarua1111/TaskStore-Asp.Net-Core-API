@@ -9,6 +9,7 @@ namespace TaskStore.Services
         Task<ApiResponse> saveTask(TaskResponse task);
         Task<ApiResponse> updateTask(TaskResponse task);
         Task<ApiResponse> deleteTask(Guid Id);
+        Task<ApiResponse> getTaskById(Guid Id);
 
     }
 }
